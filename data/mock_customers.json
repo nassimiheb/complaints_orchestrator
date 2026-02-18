@@ -1,0 +1,32 @@
+[
+  {
+    "customer_id": "CUST-1001",
+    "display_name": "Alice Martin",
+    "preferred_language": "FR",
+    "loyalty_tier": "GOLD",
+    "account_age_days": 840,
+    "lifetime_orders": 32,
+    "ninety_day_compensation_total": 35.0,
+    "fraud_watch": false
+  },
+  {
+    "customer_id": "CUST-1002",
+    "display_name": "Brian Cooper",
+    "preferred_language": "EN",
+    "loyalty_tier": "SILVER",
+    "account_age_days": 410,
+    "lifetime_orders": 14,
+    "ninety_day_compensation_total": 0.0,
+    "fraud_watch": false
+  },
+  {
+    "customer_id": "CUST-1003",
+    "display_name": "Camille Roy",
+    "preferred_language": "FR",
+    "loyalty_tier": "STANDARD",
+    "account_age_days": 120,
+    "lifetime_orders": 4,
+    "ninety_day_compensation_total": 89.0,
+    "fraud_watch": true
+  }
+]

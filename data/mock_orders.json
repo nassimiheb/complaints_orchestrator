@@ -1,0 +1,32 @@
+[
+  {
+    "order_id": "ORD-5001",
+    "customer_id": "CUST-1001",
+    "order_date": "2025-12-02",
+    "channel": "ONLINE",
+    "currency": "EUR",
+    "order_total": 129.9,
+    "item_count": 2,
+    "status": "DELIVERED"
+  },
+  {
+    "order_id": "ORD-5002",
+    "customer_id": "CUST-1002",
+    "order_date": "2026-01-12",
+    "channel": "MOBILE",
+    "currency": "USD",
+    "order_total": 78.5,
+    "item_count": 1,
+    "status": "IN_TRANSIT"
+  },
+  {
+    "order_id": "ORD-5003",
+    "customer_id": "CUST-1003",
+    "order_date": "2026-01-28",
+    "channel": "ONLINE",
+    "currency": "EUR",
+    "order_total": 245.0,
+    "item_count": 3,
+    "status": "DELIVERED"
+  }
+]
