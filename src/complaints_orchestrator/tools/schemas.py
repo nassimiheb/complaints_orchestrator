@@ -54,7 +54,7 @@ class GetCaseHistoryInput(ToolSchema):
 class GetCaseHistoryOutput(ToolSchema):
     customer_id: str
     open_case_count: int = Field(ge=0)
-    recent_escalations: int = Field(ge=0)
+    recent_escalations_count: int = Field(ge=0)
     cases: list[CaseHistoryRecord]
 
 
@@ -97,4 +97,3 @@ class CreateSupportTicketOutput(ToolSchema):
     status: str
     queue: str
     created_at: str
-
