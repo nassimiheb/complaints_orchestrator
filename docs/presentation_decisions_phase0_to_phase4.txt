@@ -1,5 +1,5 @@
 Customer Complaints Resolution Orchestrator
-Presentation Notes - Decisions, Implementations, and Oral Script (Phase 0 to Phase 4)
+Presentation Notes - Decisions, Implementations, and Oral Script (Phase 0 to Phase 5)
 
 How to use this file:
 - "What we implemented" = concrete delivery.
@@ -262,6 +262,61 @@ How to explain orally:
 "Phase 4 delivered secure internal RAG. We limited sources to approved internal docs, sanitized aggressively, blocked suspicious chunks, and attached metadata for language-aware retrieval. This gives policy grounding while reducing prompt-injection and leakage risks."
 
 ------------------------------------------------------------
+PHASE 5 - SECURITY UTILITIES AND GUARDS
+------------------------------------------------------------
+Goal:
+Add reusable security guardrails for triage input, language behavior, and customer-facing output.
+
+What we implemented:
+- PII redaction utility in `utils/pii.py`:
+  - redacts email/phone/IBAN/card-like patterns
+  - returns structured redaction result
+  - records security events.
+- Language helper in `utils/language.py`:
+  - deterministic FR/EN detection
+  - response-language selection with memory fallback.
+- Output guard in `utils/output_guard.py`:
+  - detects internal leakage patterns
+  - supports sanitize-and-recheck flow
+  - emits guard outcome events.
+- Utility exports in `utils/__init__.py`.
+- Security demo path in `src/main.py` (`--demo-security`) showing:
+  - redacted triage body
+  - selected language
+  - output guard result
+  - `security_events` and `output_guard_passed`.
+- Tests in `tests/test_security_utils.py`.
+
+Decisions and why:
+1) Decision: Redact PII before triage with explicit placeholders.
+Why:
+- Prevents exposing sensitive customer data to downstream model steps.
+- Preserves complaint context while removing direct identifiers.
+
+2) Decision: Record every security-relevant action as an event.
+Why:
+- Creates an auditable timeline of protections applied.
+- Simplifies debugging and compliance demonstrations.
+
+3) Decision: Keep language helper deterministic and lightweight.
+Why:
+- Predictable behavior for tests/demos.
+- Clean fallback behavior when detection is ambiguous.
+
+4) Decision: Output guard checks and sanitizes internal leakage.
+Why:
+- Customer replies must not expose internal scores, policy IDs, or raw tool data.
+- Sanitization enables safe fallback instead of always hard failure.
+
+5) Decision: Validate security behavior with dedicated unit tests.
+Why:
+- Locks guardrail behavior before agent orchestration is added.
+- Prevents silent regressions in security-critical paths.
+
+How to explain orally:
+"Phase 5 operationalized security utilities. We now sanitize triage inputs with PII redaction, make language decisions with deterministic fallback, and run an output guard to block internal leakage before customer messaging. All of this is visible through security events and covered by tests."
+
+------------------------------------------------------------
 CROSS-PHASE ARCHITECTURAL PRINCIPLES WE FOLLOWED
 ------------------------------------------------------------
 1) Security by design:
@@ -289,5 +344,5 @@ Phase 1 locked contracts using Pydantic schemas and a strict graph state that al
 Phase 2 implemented local tool APIs behind a central registry enforcing role-based permissions, validation, and retries.
 Phase 3 added durable SQLite memory with customer and case tables, plus a hard block on raw email persistence.
 Phase 4 introduced secure RAG on internal bilingual policy docs, with prompt-injection filtering at indexing and retrieval, language-aware retrieval, and metadata-based controls.
+Phase 5 introduced reusable security guardrails: PII redaction, language fallback logic, and output leakage blocking with sanitization and event logging.
 The result is a deterministic, testable, and security-first foundation ready for agent orchestration in upcoming phases."
-

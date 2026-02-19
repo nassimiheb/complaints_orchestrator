@@ -1,0 +1,47 @@
+[
+  {
+    "id": "late_delivery_en",
+    "title": "Late delivery (EN)",
+    "email_subject": "Where is my order",
+    "email_body": "Hello support, my order is late and I need an update please.",
+    "customer_id": "CUST-1002",
+    "order_id": "ORD-5002",
+    "preferred_language": "EN"
+  },
+  {
+    "id": "defect_refund_fr",
+    "title": "Defective item refund request (FR)",
+    "email_subject": "Demande de remboursement",
+    "email_body": "Bonjour, mon article est defectueux et je veux un remboursement rapidement.",
+    "customer_id": "CUST-1001",
+    "order_id": "ORD-5001",
+    "preferred_language": "FR"
+  },
+  {
+    "id": "legal_threat_en",
+    "title": "Legal threat escalation (EN)",
+    "email_subject": "Last warning",
+    "email_body": "I will contact my lawyer and start legal action if this is not resolved today.",
+    "customer_id": "CUST-1003",
+    "order_id": "ORD-5003",
+    "preferred_language": "EN"
+  },
+  {
+    "id": "public_exposure_fr",
+    "title": "Public exposure escalation (FR)",
+    "email_subject": "Je vais publier partout",
+    "email_body": "Je vais partager cette experience sur les reseaux sociaux et Trustpilot.",
+    "customer_id": "CUST-1001",
+    "order_id": "ORD-5001",
+    "preferred_language": "FR"
+  },
+  {
+    "id": "repeat_claim_high_amount",
+    "title": "Repeat claim and high amount mention",
+    "email_subject": "Again the same issue",
+    "email_body": "This is the third time and I want 500 EUR compensation immediately.",
+    "customer_id": "CUST-1003",
+    "order_id": "ORD-5003",
+    "preferred_language": "EN"
+  }
+]
