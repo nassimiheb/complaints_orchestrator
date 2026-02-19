@@ -1,0 +1,44 @@
+[
+  {
+    "id": "ctx_refund_fr",
+    "title": "Defective item refund context (FR)",
+    "email_subject": "Demande de remboursement",
+    "email_body": "Bonjour, mon article est defectueux et je veux un remboursement.",
+    "customer_id": "CUST-1001",
+    "order_id": "ORD-5001",
+    "response_language": "FR",
+    "complaint_type": "DEFECTIVE_ITEM",
+    "sentiment": "NEGATIVE",
+    "urgency": "HIGH",
+    "risk_flags": []
+  },
+  {
+    "id": "ctx_delay_en",
+    "title": "Late delivery info context (EN)",
+    "email_subject": "Where is my order",
+    "email_body": "Hello support, my order is still in transit and I need an update.",
+    "customer_id": "CUST-1002",
+    "order_id": "ORD-5002",
+    "response_language": "EN",
+    "complaint_type": "LATE_DELIVERY",
+    "sentiment": "NEUTRAL",
+    "urgency": "MEDIUM",
+    "risk_flags": []
+  },
+  {
+    "id": "ctx_repeat_claim_watch",
+    "title": "Repeat claim profile with fraud watch",
+    "email_subject": "Again the same issue",
+    "email_body": "This is the third time, I want compensation now.",
+    "customer_id": "CUST-1003",
+    "order_id": "ORD-5003",
+    "response_language": "EN",
+    "complaint_type": "REPEAT_CLAIM",
+    "sentiment": "NEGATIVE",
+    "urgency": "HIGH",
+    "risk_flags": [
+      "REPEAT_CLAIM",
+      "HIGH_AMOUNT_RISK"
+    ]
+  }
+]
