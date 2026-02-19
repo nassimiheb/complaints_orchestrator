@@ -1,0 +1,84 @@
+[
+  {
+    "id": "res_refund_defect_en",
+    "title": "Defective item refund path (EN)",
+    "email_subject": "Refund request for defective item",
+    "email_body": "Hello, the item is defective and I need a refund.",
+    "customer_id": "CUST-1001",
+    "order_id": "ORD-5001",
+    "response_language": "EN",
+    "complaint_type": "DEFECTIVE_ITEM",
+    "sentiment": "NEGATIVE",
+    "urgency": "HIGH",
+    "risk_flags": [],
+    "triage_confidence": 0.9,
+    "context_confidence": 0.86,
+    "order_total": 129.9,
+    "order_status": "DELIVERED",
+    "currency": "EUR",
+    "fraud_watch": false,
+    "repeat_claim_suspected": false,
+    "recent_escalations_count": 0,
+    "ninety_day_compensation_total": 20.0,
+    "policy_constraints": [
+      "If defect is confirmed and policy window applies, refund is allowed.",
+      "Keep customer communication concise and action oriented."
+    ]
+  },
+  {
+    "id": "res_voucher_delay_fr",
+    "title": "Delay compensation path (FR)",
+    "email_subject": "Retard de livraison",
+    "email_body": "Bonjour, ma commande est en retard et je veux un geste commercial.",
+    "customer_id": "CUST-1002",
+    "order_id": "ORD-5002",
+    "response_language": "FR",
+    "complaint_type": "LATE_DELIVERY",
+    "sentiment": "NEGATIVE",
+    "urgency": "MEDIUM",
+    "risk_flags": [],
+    "triage_confidence": 0.88,
+    "context_confidence": 0.82,
+    "order_total": 78.5,
+    "order_status": "DELIVERED",
+    "currency": "USD",
+    "fraud_watch": false,
+    "repeat_claim_suspected": false,
+    "recent_escalations_count": 0,
+    "ninety_day_compensation_total": 0.0,
+    "policy_constraints": [
+      "La compensation est adaptee quand un remboursement total n est pas requis.",
+      "Le message client doit rester clair et bref."
+    ]
+  },
+  {
+    "id": "res_escalate_legal",
+    "title": "Immediate escalation risk path",
+    "email_subject": "Final warning",
+    "email_body": "I will contact my lawyer and post publicly if this is not resolved.",
+    "customer_id": "CUST-1003",
+    "order_id": "ORD-5003",
+    "response_language": "EN",
+    "complaint_type": "PUBLIC_COMPLAINT",
+    "sentiment": "NEGATIVE",
+    "urgency": "CRITICAL",
+    "risk_flags": [
+      "LEGAL_THREAT",
+      "PUBLIC_EXPOSURE",
+      "HIGH_AMOUNT_RISK"
+    ],
+    "triage_confidence": 0.93,
+    "context_confidence": 0.8,
+    "order_total": 245.0,
+    "order_status": "DELIVERED",
+    "currency": "EUR",
+    "fraud_watch": true,
+    "repeat_claim_suspected": true,
+    "recent_escalations_count": 1,
+    "ninety_day_compensation_total": 89.0,
+    "policy_constraints": [
+      "High-risk legal or public exposure cases require human specialist review.",
+      "Do not disclose internal reasoning or policy identifiers in customer communication."
+    ]
+  }
+]
