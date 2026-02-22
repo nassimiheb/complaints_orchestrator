@@ -3,14 +3,10 @@
 from __future__ import annotations
 
 import argparse
-import gc
 import json
 import logging
-import shutil
 import sqlite3
 import sys
-import tempfile
-import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -60,6 +56,10 @@ def _default_scenarios_path() -> Path:
 
 def _default_docs_dir() -> Path:
     return PROJECT_ROOT / "src" / "complaints_orchestrator" / "rag" / "documents"
+
+
+def _default_eval_db_path() -> Path:
+    return PROJECT_ROOT / "storage" / "eval_memory.db"
 
 
 def parse_args() -> argparse.Namespace:
@@ -390,19 +390,6 @@ def _print_results(results: list[ScenarioResult], show_demo_output: bool = True)
     print(f"Summary: {passed_count}/{len(results)} scenarios passed.")
 
 
-def _cleanup_temp_dir(path: Path) -> None:
-    for attempt in range(5):
-        try:
-            gc.collect()
-            shutil.rmtree(path)
-            return
-        except PermissionError:
-            if attempt == 4:
-                LOGGER.warning("Could not remove temporary eval directory: %s", path)
-                return
-            time.sleep(0.2 * (attempt + 1))
-
-
 def run(args: argparse.Namespace) -> int:
     config = AppConfig.from_env(env_file=args.env_file)
     configure_logging(config.log_level)
@@ -413,20 +400,23 @@ def run(args: argparse.Namespace) -> int:
     scenarios = _load_scenarios(Path(args.scenarios_file).resolve())
     scenarios = _filter_scenarios(scenarios, args.scenario_id)
 
-    tmp_dir = Path(tempfile.mkdtemp(prefix="cco_eval_"))
+    db_path = _default_eval_db_path()
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+    if db_path.exists():
+        db_path.unlink()
+    db_path_str = str(db_path)
     memory_store: MemoryStore | None = None
     results: list[ScenarioResult] = []
     try:
-        db_path = str(tmp_dir / "eval_memory.db")
-        seed_memory(db_path=db_path)
-        memory_store = MemoryStore(db_path=db_path)
+        seed_memory(db_path=db_path_str)
+        memory_store = MemoryStore(db_path=db_path_str)
 
         _maybe_build_index(config=config, skip_index_build=args.skip_index_build)
 
         results = [
             _run_single_scenario(
                 scenario=scenario,
-                db_path=db_path,
+                db_path=db_path_str,
                 config=config,
                 memory_store=memory_store,
             )
@@ -434,9 +424,9 @@ def run(args: argparse.Namespace) -> int:
         ]
     finally:
         memory_store = None
-        _cleanup_temp_dir(tmp_dir)
 
     _print_results(results, show_demo_output=not args.quiet)
+    print(f"Eval SQLite DB retained at: {db_path_str}")
     if all(result.passed for result in results):
         return 0
     return 1
