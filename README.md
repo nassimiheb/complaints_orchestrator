@@ -52,7 +52,9 @@ Routing rules:
 complaints_orchestrator/
   data/                         # Mock customers, orders, historical cases, sample scenario inputs
   docs/                         # Architecture and presentation docs
-  eval/                         # evaluation harness
+  eval/
+    run_scenarios.py            # Evaluation runner
+    scenarios.json              # Evaluation scenarios and expected outcomes
   scripts/                      # Agent playgrounds
   src/
     main.py                     # End-to-end CLI entrypoint
@@ -62,7 +64,10 @@ complaints_orchestrator/
       rag/
       memory/
       utils/
+      constants.py
+      config.py
       graph.py                  # LangGraph orchestration
+      logging_config.py
       state.py                  # Typed CaseState contract
   tests/                        # Unit tests
   .env.example
