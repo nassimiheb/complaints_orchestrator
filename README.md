@@ -162,6 +162,11 @@ Each run prints:
 Scenario file:
 - `eval/scenarios.json`
 
+Note:
+- Eval runs  keep their SQLite database on disk for inspection at `./storage/eval_memory.db`.
+- The file is reset at the start of each eval run, then retained after execution.
+- The script prints the retained path at the end.
+
 Run all eval scenarios :
 ```bash
 python eval/run_scenarios.py
