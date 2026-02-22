@@ -1,4 +1,4 @@
-"""Phase 4 tests for secure RAG indexing and retrieval."""
+"""tests for secure RAG indexing and retrieval."""
 
 from __future__ import annotations
 

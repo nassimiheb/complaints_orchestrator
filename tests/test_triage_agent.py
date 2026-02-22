@@ -1,4 +1,4 @@
-"""Phase 6 tests for Agent 1: Triage and routing."""
+""" tests for Agent 1: Triage and routing."""
 
 from __future__ import annotations
 

@@ -1,0 +1,78 @@
+[
+  {
+    "id": "eval_late_delivery_en",
+    "title": "Late delivery update request in English",
+    "input": {
+      "customer_id": "CUST-1002",
+      "order_id": "ORD-5002",
+      "email_subject": "Where is my order?",
+      "email_body": "Hello support, EVAL_TOKEN_CASE1. My email is brian.eval@example.com and my phone is +1 202 555 0147. My order is late and I need a tracking update.",
+      "channel": "EMAIL"
+    },
+    "expected": {
+      "route_decision": "NEED_CONTEXT",
+      "response_language": "EN",
+      "decision_any_of": [
+        "INFO_ONLY",
+        "VOUCHER"
+      ]
+    }
+  },
+  {
+    "id": "eval_defective_refund_fr",
+    "title": "Defective item refund request in French",
+    "input": {
+      "customer_id": "CUST-1001",
+      "order_id": "ORD-5001",
+      "email_subject": "Demande de remboursement",
+      "email_body": "Bonjour support, EVAL_TOKEN_CASE2. Mon email est alice.eval@example.com. Mon article est defectueux, je demande un remboursement rapidement.",
+      "channel": "EMAIL"
+    },
+    "expected": {
+      "route_decision": "NEED_CONTEXT",
+      "response_language": "FR",
+      "decision_any_of": [
+        "REFUND",
+        "EXCHANGE"
+      ]
+    }
+  },
+  {
+    "id": "eval_legal_escalation_en",
+    "title": "Legal and public exposure escalation",
+    "input": {
+      "customer_id": "CUST-1003",
+      "order_id": "ORD-5003",
+      "email_subject": "Final warning",
+      "email_body": "EVAL_TOKEN_CASE3. I will contact my lawyer and publish this on social media if this is not resolved immediately.",
+      "channel": "EMAIL"
+    },
+    "expected": {
+      "route_decision": "ESCALATE_IMMEDIATE",
+      "response_language": "EN",
+      "decision_any_of": [
+        "ESCALATE"
+      ],
+      "hitl_required": true
+    }
+  },
+  {
+    "id": "eval_refund_defective_en",
+    "title": "Defective item should lead to refund",
+    "input": {
+      "customer_id": "CUST-1001",
+      "order_id": "ORD-5001",
+      "email_subject": "Refund request for defective item",
+      "email_body": "Hello support, EVAL_TOKEN_CASE4. My item arrived defective and unusable. I would like a refund to my original payment method.",
+      "channel": "EMAIL"
+    },
+    "expected": {
+      "route_decision": "NEED_CONTEXT",
+      "response_language": "EN",
+      "decision_any_of": [
+        "REFUND"
+      ],
+      "hitl_required": false
+    }
+  }
+]

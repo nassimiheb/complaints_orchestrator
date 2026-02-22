@@ -1,4 +1,4 @@
-"""Phase 3 tests for persistent memory behavior."""
+"""tests for persistent memory behavior."""
 
 from __future__ import annotations
 

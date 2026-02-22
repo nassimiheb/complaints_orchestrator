@@ -11,6 +11,7 @@ from urllib import request
 from complaints_orchestrator.constants import DecisionType, RiskFlag, ResponseLanguage, UrgencyLevel
 from complaints_orchestrator.agents.resolution_agent_utils import (
     build_ticket_payload,
+    canonicalize_complaint_type,
     coerce_confidence,
     compute_voucher_value,
     contains_any,
@@ -92,7 +93,7 @@ def _score_options(state: CaseState) -> dict[DecisionType, float]:
     assert triage is not None
     assert context is not None
 
-    complaint_type = normalize_text(triage.complaint_type)
+    complaint_type = canonicalize_complaint_type(triage.complaint_type)
     order_status = normalize_text(context.order_context.get("status", ""))
     order_total = to_float(context.order_context.get("order_total", 0.0))
     fraud_watch = to_bool(context.customer_context.get("fraud_watch", False))

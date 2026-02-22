@@ -1,4 +1,4 @@
-"""Phase 8 tests for Agent 3: resolution strategist and email writer."""
+"""tests for Agent 3: resolution strategist and email writer."""
 
 from __future__ import annotations
 
@@ -131,6 +131,50 @@ class _FakeHTTPResponse:
 
 
 class TestResolutionAgent(unittest.TestCase):
+    def test_delivery_issue_alias_maps_to_late_delivery_strategy(self) -> None:
+        state = _base_state(
+            complaint_type="DELIVERY_ISSUE",
+            order_total=78.5,
+            order_status="IN_TRANSIT",
+            policy_constraints=[
+                "Compensation is appropriate for delay inconvenience.",
+                "Keep communication concise and clear.",
+            ],
+        )
+
+        with patch(
+            "complaints_orchestrator.agents.resolution_agent.request.urlopen",
+            return_value=_FakeHTTPResponse(_mistral_response_payload()),
+        ):
+            run_resolution(state, signals=ResolutionSignals(mistral_api_key="test-key"))
+
+        self.assertIsNotNone(state.resolution)
+        assert state.resolution is not None
+        self.assertIn(state.resolution.decision, {DecisionType.INFO_ONLY, DecisionType.VOUCHER})
+        self.assertFalse(state.resolution.hitl_required)
+
+    def test_product_defect_alias_maps_to_defective_item_strategy(self) -> None:
+        state = _base_state(
+            complaint_type="PRODUCT_DEFECT",
+            order_total=99.0,
+            order_status="DELIVERED",
+            policy_constraints=[
+                "Refund is allowed when defect is confirmed within policy window.",
+                "Keep communication concise and clear.",
+            ],
+        )
+
+        with patch(
+            "complaints_orchestrator.agents.resolution_agent.request.urlopen",
+            return_value=_FakeHTTPResponse(_mistral_response_payload()),
+        ):
+            run_resolution(state, signals=ResolutionSignals(mistral_api_key="test-key"))
+
+        self.assertIsNotNone(state.resolution)
+        assert state.resolution is not None
+        self.assertEqual(state.resolution.decision, DecisionType.REFUND)
+        self.assertFalse(state.resolution.hitl_required)
+
     def test_refund_decision_and_action_for_defective_item(self) -> None:
         state = _base_state(
             complaint_type="DEFECTIVE_ITEM",

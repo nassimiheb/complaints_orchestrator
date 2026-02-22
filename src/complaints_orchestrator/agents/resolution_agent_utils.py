@@ -37,6 +37,20 @@ def normalize_text(value: object) -> str:
     return str(value).strip().upper().replace(" ", "_")
 
 
+def canonicalize_complaint_type(value: object) -> str:
+    normalized = normalize_text(value)
+    aliases = {
+        "PRODUCT_DEFECT": "DEFECTIVE_ITEM",
+        "DEFECTIVE_PRODUCT": "DEFECTIVE_ITEM",
+        "ITEM_DEFECT": "DEFECTIVE_ITEM",
+        "DELIVERY_ISSUE": "LATE_DELIVERY",
+        "SHIPPING_DELAY": "LATE_DELIVERY",
+        "DELIVERY_PROBLEM": "LATE_DELIVERY",
+        "TRACKING_ISSUE": "TRACKING_REQUEST",
+    }
+    return aliases.get(normalized, normalized)
+
+
 def coerce_confidence(raw: object, field_name: str = "resolution_confidence") -> float:
     try:
         value = float(raw)
@@ -135,4 +149,3 @@ def build_ticket_payload(
         "risk_flags": [flag.value for flag in triage.risk_flags],
         "hitl_reason": hitl_reason or "",
     }
-

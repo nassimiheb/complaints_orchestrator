@@ -1,4 +1,4 @@
-"""Phase 7 tests for Agent 2: context and policy enrichment."""
+"""tests for Agent 2: context and policy enrichment."""
 
 from __future__ import annotations
 

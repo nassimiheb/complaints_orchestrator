@@ -1,4 +1,4 @@
-"""Phase 2 tests for tool registry permissions and validation."""
+"""tests for tool registry permissions and validation."""
 
 from __future__ import annotations
 

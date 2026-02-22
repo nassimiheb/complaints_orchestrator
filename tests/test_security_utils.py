@@ -1,4 +1,4 @@
-"""Phase 5 tests for security utilities and guardrails."""
+"""tests for security utilities and guardrails."""
 
 from __future__ import annotations
 
