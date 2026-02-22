@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-import re
 from dataclasses import dataclass
 from typing import Any
 
@@ -23,7 +22,6 @@ from complaints_orchestrator.state import CaseState, ContextOutput, FinalizeOutp
 from complaints_orchestrator.utils.pii import redact_for_triage
 
 LOGGER = logging.getLogger(__name__)
-AMOUNT_PATTERN = re.compile(r"([0-9]+(?:\.[0-9]+)?)")
 
 
 @dataclass(frozen=True)
@@ -196,10 +194,9 @@ def _extract_action_amount(state: CaseState, tool_name: str) -> float:
     for action in state.resolution.tool_actions:
         if action.tool_name != tool_name:
             continue
-        matched = AMOUNT_PATTERN.search(action.confirmation_message)
-        if not matched:
+        if action.action_value is None:
             return 0.0
-        return round(float(matched.group(1)), 2)
+        return round(float(action.action_value), 2)
     return 0.0
 
 

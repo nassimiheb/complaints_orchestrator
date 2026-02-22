@@ -264,6 +264,8 @@ class TestGraphOrchestration(unittest.TestCase):
                             status="CREATED",
                             reference_id="CMP-200",
                             confirmation_message="Voucher created for 25.0 EUR.",
+                            action_value=25.0,
+                            action_currency="EUR",
                         ).model_dump()
                     ],
                     "response_subject": "Compensation update",

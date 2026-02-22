@@ -56,6 +56,8 @@ class ToolActionRecord(StateModel):
     status: str
     reference_id: str
     confirmation_message: str
+    action_value: float | None = None
+    action_currency: str | None = None
 
 
 class ResolutionOutput(StateModel):
@@ -84,4 +86,3 @@ class CaseState(StateModel):
     redacted_email_body: str = ""
     security_events: list[str] = Field(default_factory=list)
     output_guard_passed: bool = False
-

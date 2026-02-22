@@ -251,6 +251,8 @@ def _execute_actions(
                     f"Refund issued for order {state.input.order_id} "
                     f"({round(max(order_total, 0.0), 2)} {currency})."
                 ),
+                action_value=round(max(order_total, 0.0), 2),
+                action_currency=currency,
             )
         )
         return actions
@@ -273,6 +275,8 @@ def _execute_actions(
                 status=str(compensation.get("status", "UNKNOWN")),
                 reference_id=str(compensation.get("compensation_id", "N/A")),
                 confirmation_message=f"Voucher created for {voucher_value} {currency}.",
+                action_value=voucher_value,
+                action_currency=currency,
             )
         )
         return actions
