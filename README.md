@@ -149,6 +149,34 @@ Security utility demo:
 python src/main.py --demo-security
 ```
 
+## Run web UI (local)
+Install dependencies from `requirements.txt`, then start the FastAPI UI.
+
+Set `PYTHONPATH` so imports resolve from `src/`.
+
+Linux/macOS:
+```bash
+export PYTHONPATH=src
+```
+
+Windows PowerShell:
+```powershell
+$env:PYTHONPATH="src"
+```
+
+Run server with helper entrypoint:
+```bash
+python src/web_main.py --reload --port 8000
+```
+
+Open:
+- `http://127.0.0.1:8000`
+
+API endpoints:
+- `GET /health`
+- `GET /api/scenarios` (includes cases from `data/triage_playground_cases.json` and `eval/scenarios.json`)
+- `POST /api/cases/run`
+
 ## Runtime output contract (main CLI)
 Each run prints:
 - Case summary (type, sentiment, urgency, language)

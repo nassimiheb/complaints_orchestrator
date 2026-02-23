@@ -307,6 +307,43 @@ class TestResolutionAgent(unittest.TestCase):
             with self.assertRaises(RuntimeError):
                 run_resolution(state, signals=ResolutionSignals(mistral_api_key="test-key"))
 
+    def test_internal_case_identifier_in_subject_is_replaced_with_order_id(self) -> None:
+        state = _base_state()
+        payload = _mistral_response_payload(
+            response_subject="Your Refund for Order #WEB_CASE_20260222_192255_385035",
+            response_body="We processed your refund.",
+        )
+
+        with patch(
+            "complaints_orchestrator.agents.resolution_agent.request.urlopen",
+            return_value=_FakeHTTPResponse(payload),
+        ):
+            run_resolution(state, signals=ResolutionSignals(mistral_api_key="test-key"))
+
+        self.assertIsNotNone(state.resolution)
+        assert state.resolution is not None
+        self.assertIn("ORD-5001", state.resolution.response_subject)
+        self.assertNotIn("WEB_CASE_", state.resolution.response_subject.upper())
+        self.assertNotIn("CASE-RES-1", state.resolution.response_subject.upper())
+
+    def test_escaped_newlines_in_body_are_preserved_as_line_breaks(self) -> None:
+        state = _base_state()
+        payload = _mistral_response_payload(
+            response_subject="Refund update",
+            response_body="Hello,\\n\\nWe have processed your refund.\\nThank you.",
+        )
+
+        with patch(
+            "complaints_orchestrator.agents.resolution_agent.request.urlopen",
+            return_value=_FakeHTTPResponse(payload),
+        ):
+            run_resolution(state, signals=ResolutionSignals(mistral_api_key="test-key"))
+
+        self.assertIsNotNone(state.resolution)
+        assert state.resolution is not None
+        self.assertIn("\n\n", state.resolution.response_body)
+        self.assertNotIn("\\n", state.resolution.response_body)
+
 
 if __name__ == "__main__":
     unittest.main()

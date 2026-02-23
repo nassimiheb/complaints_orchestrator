@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ app_title }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+  <script defer src="{{ url_for('static', path='/app.js') }}"></script>
+</head>
+<body>
+  <main class="page-shell">
+    <header class="hero panel">
+      <p class="eyebrow">Workflow Control Surface</p>
+      <h1>{{ app_title }}</h1>
+      <p class="hero-copy">
+        Submit an incoming complaint and inspect triage, policy context, resolution, and security signals in one place.
+      </p>
+    </header>
+
+    <section class="panel input-panel">
+      <h2>Case Input</h2>
+      <p class="section-note">Use manual input or prefill from an existing playground scenario.</p>
+
+      <form id="case-form">
+        <div class="field-grid">
+          <label class="field">
+            <span>Scenario</span>
+            <select id="scenario-select">
+              <option value="">Manual Input</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Case ID (optional)</span>
+            <input id="case-id" type="text" placeholder="WEB_CASE_001">
+          </label>
+
+          <label class="field">
+            <span>Customer ID</span>
+            <input id="customer-id" type="text" required>
+          </label>
+
+          <label class="field">
+            <span>Order ID</span>
+            <input id="order-id" type="text" required>
+          </label>
+
+          <label class="field field-full">
+            <span>Email Subject</span>
+            <input id="email-subject" type="text" required>
+          </label>
+
+          <label class="field field-full">
+            <span>Email Body</span>
+            <textarea id="email-body" rows="8" required></textarea>
+          </label>
+        </div>
+
+        <div class="actions">
+          <button id="run-button" type="submit">Run Workflow</button>
+          <p id="status-text" class="status-text">Idle</p>
+        </div>
+        <p id="error-text" class="error-text hidden"></p>
+      </form>
+    </section>
+
+    <section class="panel results-panel">
+      <h2>Execution Results</h2>
+      <div class="results-grid">
+        <article class="card">
+          <h3>Summary</h3>
+          <div id="summary-content" class="summary-grid empty">Run a case to see summary metrics.</div>
+        </article>
+
+        <article class="card">
+          <h3>Decision + Rationale</h3>
+          <div id="decision-content" class="text-block empty">No decision yet.</div>
+        </article>
+
+        <article class="card">
+          <h3>Tool Actions</h3>
+          <ul id="actions-list" class="list-block empty">
+            <li>No actions yet.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>Final Email</h3>
+          <div id="email-content" class="text-block empty">No email output yet.</div>
+        </article>
+
+        <article class="card">
+          <h3>Security</h3>
+          <div id="security-content" class="text-block empty">No security events yet.</div>
+        </article>
+
+        <article class="card card-wide">
+          <h3>Structured Outputs</h3>
+          <p class="section-note">Raw JSON snapshots for triage, context, resolution, and finalize.</p>
+          <div class="json-grid">
+            <div>
+              <h4>Triage</h4>
+              <pre id="triage-json">{}</pre>
+            </div>
+            <div>
+              <h4>Context</h4>
+              <pre id="context-json">{}</pre>
+            </div>
+            <div>
+              <h4>Resolution</h4>
+              <pre id="resolution-json">{}</pre>
+            </div>
+            <div>
+              <h4>Finalize</h4>
+              <pre id="finalize-json">{}</pre>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

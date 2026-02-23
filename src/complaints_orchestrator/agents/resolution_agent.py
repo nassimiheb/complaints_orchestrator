@@ -16,6 +16,8 @@ from complaints_orchestrator.agents.resolution_agent_utils import (
     compute_voucher_value,
     contains_any,
     make_fallback_email,
+    normalize_email_body_format,
+    normalize_customer_identifier_refs,
     normalize_text,
     pick_best_decision,
     score_to_confidence,
@@ -72,7 +74,8 @@ def _request_mistral_resolution(payload: dict[str, Any], signals: ResolutionSign
         "You are a customer support resolution strategist and email writer for fashion retail complaints. "
         "Return strict JSON only with keys: rationale, resolution_confidence, response_subject, response_body. "
         "response_body must be in the requested language (FR or EN), concise, empathetic, and action-oriented. "
-        "Never include internal scores, policy IDs, raw tool JSON, or internal routing terms."
+        "Never include internal scores, policy IDs, raw tool JSON, or internal routing terms. "
+        "If referencing an identifier in the customer email, use order_id only and never use internal case identifiers."
     )
     return request_chat_json_object(
         api_key=api_key,
@@ -323,7 +326,7 @@ def _build_mistral_payload(
         "hitl_reason": hitl_reason or "",
         "response_language": triage.response_language.value,
         "case_summary": {
-            "case_id": state.input.case_id,
+            "order_id": state.input.order_id,
             "complaint_type": triage.complaint_type,
             "urgency": triage.urgency.value,
             "sentiment": triage.sentiment.value,
@@ -388,15 +391,27 @@ def run_resolution(state: CaseState, signals: ResolutionSignals | None = None) -
     resolution_confidence = round((strategy_confidence + model_confidence) / 2.0, 2)
 
     response_subject = str(model_output.get("response_subject", "")).strip()
-    response_body = str(model_output.get("response_body", "")).strip()
+    response_body = normalize_email_body_format(str(model_output.get("response_body", "")).strip())
     if not response_subject or not response_body:
         fallback_subject, fallback_body = make_fallback_email(
             language=state.triage.response_language,
-            case_id=state.input.case_id,
+            order_id=state.input.order_id,
             hitl_reason=hitl_reason,
         )
         response_subject = response_subject or fallback_subject
-        response_body = response_body or fallback_body
+        response_body = response_body or normalize_email_body_format(fallback_body)
+
+    response_subject = normalize_customer_identifier_refs(
+        text=response_subject,
+        case_id=state.input.case_id,
+        order_id=state.input.order_id,
+    )
+    response_body = normalize_customer_identifier_refs(
+        text=response_body,
+        case_id=state.input.case_id,
+        order_id=state.input.order_id,
+    )
+    response_body = normalize_email_body_format(response_body)
 
     guard_result = apply_output_guard(
         subject=response_subject,
@@ -409,7 +424,7 @@ def run_resolution(state: CaseState, signals: ResolutionSignals | None = None) -
 
     if guard_result.passed:
         final_subject = guard_result.sanitized_subject
-        final_body = guard_result.sanitized_body
+        final_body = normalize_email_body_format(guard_result.sanitized_body)
         final_decision = decision
         final_hitl_required = hitl_required
         final_hitl_reason = hitl_reason
@@ -422,7 +437,7 @@ def run_resolution(state: CaseState, signals: ResolutionSignals | None = None) -
         final_hitl_reason = "; ".join(fallback_reasons)
         final_subject, final_body = make_fallback_email(
             language=state.triage.response_language,
-            case_id=state.input.case_id,
+            order_id=state.input.order_id,
             hitl_reason=final_hitl_reason,
         )
         model_rationale = (

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+
 from complaints_orchestrator.constants import DecisionType, ResponseLanguage
 from complaints_orchestrator.state import CaseState
 
@@ -108,11 +110,12 @@ def compute_voucher_value(state: CaseState) -> float:
 
 def make_fallback_email(
     language: ResponseLanguage,
-    case_id: str,
+    order_id: str,
     hitl_reason: str | None,
 ) -> tuple[str, str]:
+    order_ref = order_id.strip() or "your order"
     if language == ResponseLanguage.FR:
-        subject = f"Mise a jour de votre dossier {case_id}"
+        subject = f"Mise a jour de votre commande {order_ref}"
         body = (
             "Bonjour,\n\n"
             "Merci pour votre message. Votre demande a ete transmise a un specialiste pour revue prioritaire.\n"
@@ -120,7 +123,7 @@ def make_fallback_email(
             "Cordialement,\nSupport Client"
         )
     else:
-        subject = f"Update on your case {case_id}"
+        subject = f"Update on your order {order_ref}"
         body = (
             "Hello,\n\n"
             "Thank you for your message. Your request has been sent to a specialist for priority review.\n"
@@ -131,6 +134,35 @@ def make_fallback_email(
     if hitl_reason:
         body = f"{body}\n\nReference: manual review required."
     return subject, body
+
+
+def normalize_customer_identifier_refs(text: str, case_id: str, order_id: str) -> str:
+    """Replace internal case identifiers with customer-facing order reference."""
+
+    if not text:
+        return text
+
+    normalized = text
+    clean_case_id = case_id.strip()
+    clean_order_id = order_id.strip() or "your order"
+
+    if clean_case_id:
+        normalized = re.sub(re.escape(clean_case_id), clean_order_id, normalized, flags=re.IGNORECASE)
+
+    normalized = re.sub(r"\bWEB_CASE_[A-Z0-9_]+\b", clean_order_id, normalized, flags=re.IGNORECASE)
+    return normalized
+
+
+def normalize_email_body_format(text: str) -> str:
+    """Preserve paragraph formatting, including escaped newline sequences."""
+
+    if not text:
+        return text
+
+    normalized = text.replace("\r\n", "\n").replace("\r", "\n")
+    normalized = normalized.replace("\\r\\n", "\n").replace("\\n", "\n")
+    normalized = re.sub(r"\n{3,}", "\n\n", normalized)
+    return normalized.strip()
 
 
 def build_ticket_payload(
