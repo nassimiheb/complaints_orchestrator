@@ -9,7 +9,7 @@ from typing import Any
 from chromadb import PersistentClient
 
 from complaints_orchestrator.rag.build_index import DEFAULT_COLLECTION_NAME
-from complaints_orchestrator.rag.local_embeddings import HashEmbeddingModel
+from complaints_orchestrator.rag.local_embeddings import build_embedding_model, resolve_embedding_provider
 from complaints_orchestrator.utils.rag_security import contains_prompt_injection, sanitize_rag_text
 
 LOGGER = logging.getLogger(__name__)
@@ -30,10 +30,21 @@ class PolicyRetriever:
         chroma_dir: str,
         collection_name: str = DEFAULT_COLLECTION_NAME,
         max_excerpt_chars: int = 400,
+        embedding_provider: str | None = None,
+        embedding_model: str | None = None,
+        embedding_api_key: str | None = None,
+        embedding_timeout_seconds: int = 30,
     ) -> None:
         self.client = PersistentClient(path=chroma_dir)
         self.collection = self.client.get_collection(name=collection_name)
-        self.embedder = HashEmbeddingModel()
+        resolved_provider = resolve_embedding_provider(embedding_provider)
+        self.embedder = build_embedding_model(
+            provider=resolved_provider,
+            model_name=embedding_model,
+            explicit_api_key=embedding_api_key,
+            timeout_seconds=embedding_timeout_seconds,
+        )
+        LOGGER.info("Embedding provider for retrieval: %s", resolved_provider)
         self.max_excerpt_chars = max_excerpt_chars
 
     def retrieve(
@@ -96,4 +107,3 @@ class PolicyRetriever:
                 break
 
         return output
-

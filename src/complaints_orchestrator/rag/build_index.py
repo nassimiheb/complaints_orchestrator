@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 from pathlib import Path
 from typing import Any
 
 from chromadb import PersistentClient
 
-from complaints_orchestrator.rag.local_embeddings import HashEmbeddingModel
+from complaints_orchestrator.rag.local_embeddings import build_embedding_model, resolve_embedding_provider
 from complaints_orchestrator.utils.rag_security import (
     chunk_text,
     contains_prompt_injection,
@@ -29,6 +30,9 @@ def build_index(
     chunk_size: int = 500,
     chunk_overlap: int = 80,
     max_chunk_chars: int = 700,
+    embedding_provider: str | None = None,
+    embedding_model: str | None = None,
+    embedding_api_key: str | None = None,
 ) -> dict[str, int]:
     docs_root = Path(docs_dir).resolve()
     if not docs_root.exists():
@@ -43,7 +47,13 @@ def build_index(
     except Exception:
         pass
     collection = client.get_or_create_collection(name=collection_name)
-    embedder = HashEmbeddingModel()
+    resolved_provider = resolve_embedding_provider(embedding_provider)
+    embedder = build_embedding_model(
+        provider=resolved_provider,
+        model_name=embedding_model,
+        explicit_api_key=embedding_api_key,
+    )
+    LOGGER.info("Embedding provider for indexing: %s", resolved_provider)
 
     ids: list[str] = []
     documents: list[str] = []
@@ -117,6 +127,16 @@ def main() -> int:
     parser.add_argument("--chunk-size", type=int, default=500, help="Chunk size in characters.")
     parser.add_argument("--chunk-overlap", type=int, default=80, help="Chunk overlap in characters.")
     parser.add_argument("--max-chunk-chars", type=int, default=700, help="Max sanitized chunk length.")
+    parser.add_argument(
+        "--embedding-provider",
+        default=os.getenv("CCO_EMBEDDING_PROVIDER", "hash"),
+        help="Embedding provider: hash or mistral.",
+    )
+    parser.add_argument(
+        "--embedding-model",
+        default=os.getenv("CCO_EMBEDDING_MODEL", "mistral-embed"),
+        help="Embedding model name (used by provider).",
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(name)s | %(message)s")
@@ -127,6 +147,8 @@ def main() -> int:
         chunk_size=args.chunk_size,
         chunk_overlap=args.chunk_overlap,
         max_chunk_chars=args.max_chunk_chars,
+        embedding_provider=args.embedding_provider,
+        embedding_model=args.embedding_model,
     )
     print(f"Index build complete: {stats}")
     return 0
@@ -134,4 +156,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

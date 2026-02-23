@@ -53,6 +53,9 @@ class ContextPolicySignals:
     chroma_dir: str | None = None
     rag_collection_name: str | None = None
     rag_top_k_per_policy: int = 2
+    embedding_provider: str | None = None
+    embedding_model: str | None = None
+    embedding_timeout_seconds: int = 30
     retriever: RetrieverLike | None = None
 
 
@@ -99,7 +102,14 @@ def _resolve_retriever(signals: ContextPolicySignals) -> RetrieverLike:
         if signals.rag_collection_name
         else DEFAULT_COLLECTION_NAME
     )
-    return PolicyRetriever(chroma_dir=chroma_dir, collection_name=collection_name)
+    return PolicyRetriever(
+        chroma_dir=chroma_dir,
+        collection_name=collection_name,
+        embedding_provider=signals.embedding_provider,
+        embedding_model=signals.embedding_model,
+        embedding_api_key=signals.mistral_api_key,
+        embedding_timeout_seconds=signals.embedding_timeout_seconds,
+    )
 
 
 def run_context_policy(state: CaseState, signals: ContextPolicySignals | None = None) -> CaseState:

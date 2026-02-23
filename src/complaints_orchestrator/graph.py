@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 from dataclasses import dataclass
 from typing import Any
 
@@ -48,6 +49,8 @@ def build_dependencies_from_config(
             mistral_model=config.model_name,
             chroma_dir=config.chroma_dir,
             rag_collection_name=DEFAULT_COLLECTION_NAME,
+            embedding_provider=os.getenv("CCO_EMBEDDING_PROVIDER"),
+            embedding_model=config.embedding_model,
         ),
         resolution_signals=ResolutionSignals(
             mistral_api_key=config.mistral_api_key,

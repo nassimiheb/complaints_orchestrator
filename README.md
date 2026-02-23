@@ -101,10 +101,16 @@ cp .env.example .env
 - `MISTRAL_API_KEY`
 - Optional tuning:
   - `CCO_MODEL_NAME`
+  - `CCO_EMBEDDING_PROVIDER` (`hash` or `mistral`, default `hash`)
+  - `CCO_EMBEDDING_MODEL` (default `mistral-embed`)
   - `CCO_CHROMA_DIR`
   - `CCO_SQLITE_PATH`
   - `CCO_HITL_AMOUNT_THRESHOLD`
   - `CCO_LOW_CONFIDENCE_THRESHOLD`
+
+For production-grade semantic retrieval, set:
+- `CCO_EMBEDDING_PROVIDER=mistral`
+- `CCO_EMBEDDING_MODEL=mistral-embed`
 
 ## Build local artifacts 
 Set `PYTHONPATH` so package imports resolve from `src/`.
